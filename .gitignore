@@ -69,8 +69,8 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
-.env.test
+# .env
+# .env.test
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -109,3 +109,7 @@ dist
 
 #Bible Files
 bibles/
+
+# Power Point Files
+.pptx
+.ppt
