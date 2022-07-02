@@ -143,7 +143,7 @@ function printSong(typeOfSong, pres, number, courtworship = false) {
 
 exports.run = async (req, res) => {
     let pptx = new PPTX.Composer();
-    const { openingHymn, closingHymn } = req.query;
+    const { openingHymn, closingHymn } = req.body;
 
     await pptx.compose(pres => {
 
