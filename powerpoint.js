@@ -161,5 +161,5 @@ exports.run = async (req, res) => {
     });
 
     await pptx.save(`./hymnal-songs.pptx`);
-    return res.status(200).json({ re: true });
+    return res.status(200).sendFile(path.join(__dirname, 'hymnal-songs.pptx'));
 }
