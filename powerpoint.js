@@ -1,5 +1,9 @@
 const PPTX = require('nodejs-pptx');
 const path = require('path');
+const accountSid = 'AC23505170ee2e94f86ce46ad9eedfe319';
+const authToken = '[AuthToken]';
+const client = require('twilio')(accountSid, authToken);
+
 
 function getFont(line) {
     const x = line.length;
@@ -140,6 +144,20 @@ function printSong(typeOfSong, pres, number, courtworship = false) {
     });
 }
 
+function printResponsiveReading(pres, number) {
+
+}
+
+function sendPresentation() {
+
+    const body = 'Hello! This is an editable text message. You are free to change it and write whatever you like.';
+    const twilioNumber = 'whatsapp:+14155238886';
+    const myNumber = 'whatsapp:+265888869204'
+    client.messages
+        .create({ body: body, from: twilioNumber, to: myNumber })
+        .then(message => console.log(message.sid))
+        .done();
+}
 
 exports.run = async (req, res) => {
     let pptx = new PPTX.Composer();
@@ -163,3 +181,13 @@ exports.run = async (req, res) => {
     await pptx.save(`./hymnal-songs.pptx`);
     return res.status(200).sendFile(path.join(__dirname, 'hymnal-songs.pptx'));
 }
+
+exports.whatsapp = async (req, res) => {
+    try {
+        return res.status(200).json({ result: true, message: "OK" });
+    } catch (e) {
+        console.log(e.message);
+        return res.status(500).json({ result: false, message: e.message });
+    }
+}
+
