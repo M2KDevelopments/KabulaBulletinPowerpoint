@@ -3,6 +3,11 @@ const path = require('path');
 const accountSid = 'AC23505170ee2e94f86ce46ad9eedfe319';
 const authToken = '5a025ba48630ca1f61af1ad54acd7fdf';
 const client = require('twilio')(accountSid, authToken);
+const axios = require('axios');
+const instance = axios.create();
+const fs = require('fs');
+const pdf = require('pdf-parse');
+
 
 
 function getFont(line) {
@@ -148,16 +153,6 @@ function printResponsiveReading(pres, number) {
 
 }
 
-function sendPresentation() {
-
-    const body = 'Hello! This is an editable text message. You are free to change it and write whatever you like.';
-    const twilioNumber = 'whatsapp:+14155238886';
-    const myNumber = 'whatsapp:+265888869204'
-    client.messages
-        .create({ body: body, from: twilioNumber, to: myNumber })
-        .then(message => console.log(message.sid))
-        .done();
-}
 
 exports.run = async (req, res) => {
     let pptx = new PPTX.Composer();
@@ -184,8 +179,84 @@ exports.run = async (req, res) => {
 
 exports.whatsapp = async (req, res) => {
     try {
-        console.log(req.body);
-        return res.status(200).json({ result: true, message: "OK" });
+        const url = req.body['MediaUrl0'];
+        const { ProfileName, From } = req.body;
+        const twilioNumber = 'whatsapp:+14155238886';
+
+
+        if (!url) {
+            const { ProfileName, From } = req.body;
+            const body = `Please the bulletin pdf file. ${ProfileName}`;
+            const myNumber = From; //'whatsapp:+265999969205'
+            client.messages
+                .create({ body: body, from: twilioNumber, to: myNumber })
+                .then(message => console.log(message.sid))
+                .done();
+            console.log('No PDF');
+            return res.status(200).json({ result: true, message: "OK" });
+        }
+
+        const response = await instance.get(url, { responseType: 'arraybuffer' })
+        const buffer64 = Buffer.from(response.data, 'binary').toString('base64')
+        fs.writeFile("bulletin.pdf", buffer64, 'base64', async function (err) {
+            console.log(err);
+            if (err) {
+
+                const body = `Sorry, ${ProfileName}, could not generate powerpoint. Error (${err.message})`;
+                const myNumber = From; //'whatsapp:+265999969205'
+                client.messages
+                    .create({ body: body, from: twilioNumber, to: myNumber })
+                    .then(message => console.log(message.sid))
+                    .done();
+                console.log('No PDF');
+                return res.status(200).json({ result: true, message: "OK" });
+            }
+
+            console.log('Download PDF');
+
+            const dataBuffer = fs.readFileSync('bulletin.pdf');
+
+            const data = await pdf(dataBuffer);
+            const index = data.text.indexOf('First Divine Service');
+            const text = data.text.substring(index);
+            const lines = text.replace(/Deaconry on Duty.*/gmi, '').split('\n');
+            const responsiveReading = lines.find(line => line.match(/Responsive Reading/gmi) ? true : false).replace(/[^0-9]/gmi, '');
+            const openingHymn = lines.find(line => line.match(/Opening hymn/gmi) ? true : false).replace(/[^0-9]/gmi, '');
+            const closingHymn = lines.find(line => line.match(/Closing hymn/gmi) ? true : false).replace(/[^0-9]/gmi, '');
+
+            const pptx = new PPTX.Composer();
+            await pptx.compose(pres => {
+
+                pres.title('KHC Sabbath Program')
+                    .author('Martin Kululanga')
+                    .company('Kabula Hill SDA')
+                    .revision('1')
+                    .subject('KHC Sabbath Program')
+                    .layout('LAYOUT_16x9');
+
+                printResponsiveReading(pres, responsiveReading)
+                printSong('Opening Hymn', pres, openingHymn);
+                printSong('Closing Hymn', pres, closingHymn);
+
+            });
+
+            //save powerpoints
+            await pptx.save(`./songs.pptx`);
+
+
+            //send whatsapp message
+            const mediaUrl = ['https://kabulappt.herokuapp.com/powerpoint'];
+            const body = `*Generated successfully*, ${ProfileName}, Here are the songs, for the service.`;
+            const myNumber = From; //'whatsapp:+265999969205'
+            client.messages
+                .create({ body: body, from: twilioNumber, to: myNumber, mediaUrl })
+                .then(message => console.log(message.sid))
+                .done();
+
+            //finish response
+            return res.status(200).json({ result: true, message: "OK" });
+        });
+
     } catch (e) {
         console.log(e.message);
         return res.status(500).json({ result: false, message: e.message });
