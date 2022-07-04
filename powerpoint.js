@@ -1,7 +1,7 @@
 const PPTX = require('nodejs-pptx');
 const path = require('path');
 const accountSid = 'AC23505170ee2e94f86ce46ad9eedfe319';
-const authToken = '[AuthToken]';
+const authToken = '5a025ba48630ca1f61af1ad54acd7fdf';
 const client = require('twilio')(accountSid, authToken);
 
 
@@ -184,6 +184,7 @@ exports.run = async (req, res) => {
 
 exports.whatsapp = async (req, res) => {
     try {
+        console.log(req.body);
         return res.status(200).json({ result: true, message: "OK" });
     } catch (e) {
         console.log(e.message);
