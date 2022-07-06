@@ -151,14 +151,122 @@ function printSong(typeOfSong, pres, number, courtworship = false) {
 
 function printResponsiveReading(pres, number) {
 
+    const hymn = require(`./res/${number}.json`);
+    const { title, verses } = hymn;
+
+    pres.addSlide(slide => {
+
+        //add title
+        slide.addText(text => {
+            text.value('Responsive Reading')
+                .x(0)
+                .y(100)
+                .cx(720)
+                .cy(100)
+                .autoFit(true)
+                .fontFace('Calibri')
+                .fontSize(105)
+                // .textColor('CC0000')
+                // .textWrap('none')
+                .textAlign('center')
+                .textVerticalAlign('center')
+                // .line({ color: '0000FF', dashType: 'dash', width: 1.0 })
+                .margin(0);
+        });
+
+
+        //add sub title
+        slide.addText(text => {
+            text.value(`#${title}`)
+                .x(20)
+                .y(260)
+                .cx(680)
+                .cy(100)
+                .fontFace('Calibri')
+                .fontSize(45)
+                // .textColor('CC0000')
+                // .textWrap('none')
+                .textAlign('center')
+                .textVerticalAlign('center')
+                // .line({ color: '0000FF', dashType: 'dash', width: 1.0 })
+                .margin(0);
+        });
+
+        verses.forEach((verse, index) => {
+            const elderReading = index % 2 == 0;
+
+            //add verse number
+            slide.addText(text => {
+                text.value(title)
+                    .x(10)
+                    .y(0)
+                    .cx(700)
+                    .cy(30)
+                    .autoFit(true)
+                    .fontFace('Calibri')
+                    .fontSize(20)
+                    .textWrap('none')
+                    .textAlign('left')
+                    .textVerticalAlign('center')
+                    .margin(0);
+            });
+
+            if (elderReading) {
+                pres.addSlide(slide => {
+                    //add line
+                    slide.addText(text => {
+                        text.value(verse)
+                            .x(0)
+                            .y(10)
+                            .cx(720)
+                            .cy(400)
+                            .autoFit(true)
+                            .fontFace('Calibri')
+                            .fontSize(45)
+                            // .textWrap('none')
+                            .textAlign('center')
+                            .fontBold(true)
+                            .textVerticalAlign('center')
+                            .margin(0);
+                    });
+
+                });
+            } else {
+                const lines = verse.split('\n');
+                lines.forEach((line, linecount) => {
+                    pres.addSlide(slide => {
+                        //add line
+                        slide.addText(text => {
+                            const font = getFont(line)
+                            text.value(line.replace(',', '\n'))
+                                .x(0)
+                                .y(10)
+                                .cx(720)
+                                .cy(400)
+                                .autoFit(true)
+                                .fontFace('Calibri')
+                                .fontSize(font)
+                                // .textWrap('none')
+                                .textAlign('center')
+                                .fontBold(true)
+                                .textVerticalAlign('center')
+                                .margin(0);
+                        });
+
+                    });
+                });
+            }
+
+        });
+    });
 }
 
- 
+
+exports.download = async (req, res) => {
 
 
-exports.run = async (req, res) => {
     let pptx = new PPTX.Composer();
-    const { openingHymn, closingHymn } = req.body;
+    const { openingHymn, closingHymn, responsiveReading } = req.body;
 
     await pptx.compose(pres => {
 
@@ -170,6 +278,7 @@ exports.run = async (req, res) => {
             .layout('LAYOUT_16x9');
 
         // printSong('Court Worship', pres, 694, true);
+        printResponsiveReading(pres, responsiveReading);
         printSong('Opening Hymn', pres, openingHymn);
         printSong('Closing Hymn', pres, closingHymn);
 
@@ -244,7 +353,7 @@ exports.whatsapp = async (req, res) => {
 
             //save powerpoints
             await pptx.save(`./songs.pptx`);
-           
+
 
             //send whatsapp message
             const mediaUrl = ['https://kabulappt.herokuapp.com/powerpoint'];

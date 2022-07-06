@@ -20,7 +20,7 @@ app.set('view engine', 'ejs');//Set EJS
 
 app.get('/', (req, res) => res.status(200).render(path.join(__dirname, "./index.ejs"), {}));
 app.get('/powerpoint', (req, res) => res.status(200).sendFile(path.join(__dirname, 'songs.pptx')));
-app.post('/download', powerpoint.run);
+app.post('/download', powerpoint.download);
 app.post('/whatsapp', powerpoint.whatsapp);
 
 const port = process.env.PORT || 4000;
