@@ -331,7 +331,8 @@ exports.whatsapp = async (req, res) => {
             const index = data.text.indexOf('First Divine Service');
             const text = data.text.substring(index);
             const lines = text.replace(/Deaconry on Duty.*/gmi, '').split('\n');
-            const responsiveReading = lines.find(line => line.match(/Responsive Reading/gmi) ? true : false).replace(/[^0-9]/gmi, '');
+            const responsiveHeader = lines.find(line => line.match(/Responsive Reading/gmi) ? true : false);
+            const responsiveReading = responsiveHeader ? responsiveHeader.replace(/[^0-9]/gmi, '') : 0;
             const openingHymn = lines.find(line => line.match(/Opening hymn/gmi) ? true : false).replace(/[^0-9]/gmi, '');
             const closingHymn = lines.find(line => line.match(/Closing hymn/gmi) ? true : false).replace(/[^0-9]/gmi, '');
 
@@ -345,7 +346,7 @@ exports.whatsapp = async (req, res) => {
                     .subject('KHC Sabbath Program')
                     .layout('LAYOUT_16x9');
 
-                printResponsiveReading(pres, responsiveReading)
+                if (responsiveReading > 0) printResponsiveReading(pres, responsiveReading);
                 printSong('Opening Hymn', pres, openingHymn);
                 printSong('Closing Hymn', pres, closingHymn);
 
