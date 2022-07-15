@@ -39,7 +39,7 @@ function printSong(typeOfSong, pres, number, courtworship = false) {
                 .fontSize(105)
                 // .textColor('CC0000')
                 // .textWrap('none')
-                .textAlign('center')
+                .textAlign('left')
                 .textVerticalAlign('center')
                 // .line({ color: '0000FF', dashType: 'dash', width: 1.0 })
                 .margin(0);
@@ -103,49 +103,51 @@ function printSong(typeOfSong, pres, number, courtworship = false) {
                         .margin(0);
                 });
 
-                if (chorus !== "") {
-                    const chorus_lines = chorus.split('\n');
-                    chorus_lines.forEach(line => {
-                        pres.addSlide(slide => {
-                            //add verse number
-                            slide.addText(text => {
-                                text.value(`Corus`)
-                                    .x(10)
-                                    .y(0)
-                                    .cx(700)
-                                    .cy(30)
-                                    .autoFit(true)
-                                    .fontFace('Calibri')
-                                    .fontSize(20)
-                                    .textWrap('none')
-                                    .textAlign('center')
-                                    .textVerticalAlign('center')
-                                    .margin(0);
-                            });
 
-
-                            //add verse text
-                            const font = getFont(line);
-                            slide.addText(text => {
-                                text.value(line)
-                                    .x(0)
-                                    .y(10)
-                                    .cx(720)
-                                    .cy(400)
-                                    .autoFit(true)
-                                    .fontFace('Calibri')
-                                    .fontSize(font)
-                                    // .textWrap('none')
-                                    .textAlign('center')
-                                    .textVerticalAlign('center')
-                                    .fontBold(true)
-                                    .margin(0);
-                            });
-                        });
-                    });
-                }
             });
         });
+
+        if (chorus !== "") {
+            const chorus_lines = chorus.split('\n');
+            chorus_lines.forEach(line => {
+                pres.addSlide(slide => {
+                    //add verse number
+                    slide.addText(text => {
+                        text.value(`Corus`)
+                            .x(10)
+                            .y(0)
+                            .cx(700)
+                            .cy(30)
+                            .autoFit(true)
+                            .fontFace('Calibri')
+                            .fontSize(20)
+                            .textWrap('none')
+                            .textAlign('center')
+                            .textVerticalAlign('center')
+                            .margin(0);
+                    });
+
+
+                    //add verse text
+                    const font = getFont(line);
+                    slide.addText(text => {
+                        text.value(line)
+                            .x(0)
+                            .y(10)
+                            .cx(720)
+                            .cy(400)
+                            .autoFit(true)
+                            .fontFace('Calibri')
+                            .fontSize(font)
+                            // .textWrap('none')
+                            .textAlign('center')
+                            .textVerticalAlign('center')
+                            .fontBold(true)
+                            .margin(0);
+                    });
+                });
+            });
+        }
     });
 }
 
@@ -195,24 +197,25 @@ function printResponsiveReading(pres, number) {
         verses.forEach((verse, index) => {
             const elderReading = index % 2 == 0;
 
-            //add verse number
-            slide.addText(text => {
-                text.value(title)
-                    .x(10)
-                    .y(0)
-                    .cx(700)
-                    .cy(30)
-                    .autoFit(true)
-                    .fontFace('Calibri')
-                    .fontSize(20)
-                    .textWrap('none')
-                    .textAlign('left')
-                    .textVerticalAlign('center')
-                    .margin(0);
-            });
-
             if (elderReading) {
                 pres.addSlide(slide => {
+
+                    //add title
+                    slide.addText(text => {
+                        text.value(title)
+                            .x(10)
+                            .y(0)
+                            .cx(700)
+                            .cy(30)
+                            .autoFit(true)
+                            .fontFace('Calibri')
+                            .fontSize(20)
+                            .textWrap('none')
+                            .textAlign('left')
+                            .textVerticalAlign('center')
+                            .margin(0);
+                    });
+
                     //add line
                     slide.addText(text => {
                         text.value(verse)
@@ -234,6 +237,23 @@ function printResponsiveReading(pres, number) {
             } else {
                 const lines = verse.split('\n');
                 lines.forEach((line, linecount) => {
+
+                    //add title
+                    slide.addText(text => {
+                        text.value(title)
+                            .x(10)
+                            .y(0)
+                            .cx(700)
+                            .cy(30)
+                            .autoFit(true)
+                            .fontFace('Calibri')
+                            .fontSize(20)
+                            .textWrap('none')
+                            .textAlign('left')
+                            .textVerticalAlign('center')
+                            .margin(0);
+                    });
+
                     pres.addSlide(slide => {
                         //add line
                         slide.addText(text => {
