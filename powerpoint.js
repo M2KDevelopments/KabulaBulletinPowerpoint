@@ -228,7 +228,8 @@ function printResponsiveReading(pres, number) {
                             .fontSize(45)
                             // .textWrap('none')
                             .textAlign('center')
-                            .fontBold(true)
+                            // .fontBold(false)
+                            // .fontItatic(true)
                             .textVerticalAlign('center')
                             .margin(0);
                     });
@@ -258,7 +259,13 @@ function printResponsiveReading(pres, number) {
                         //add line
                         slide.addText(text => {
                             const font = getFont(line)
-                            text.value(line.replace(',', '\n'))
+                            const t = line.replace(',', '\n')
+
+                            //remove new line at the end of string
+                            const v = t.indexOf('\n') == t.length - 1 ? t.substring(0, t.length - 1) : t;
+                            console.log(t.indexOf('\n'), v);
+
+                            text.value(v)
                                 .x(0)
                                 .y(10)
                                 .cx(720)
