@@ -1,4 +1,4 @@
-//environment variables - https://www.npmjs.com/package/dotenv
+// Environment variables - https://www.npmjs.com/package/dotenv
 require('dotenv').config();
 
 const http = require('http');
@@ -10,8 +10,7 @@ const powerpoint = require("./powerpoint");
 const path = require('path');
 
 
-
-//Middleware
+// Middleware
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -20,6 +19,8 @@ app.set('view engine', 'ejs');//Set EJS
 
 app.get('/', (req, res) => res.status(200).render(path.join(__dirname, "./index.ejs"), {}));
 app.get('/powerpoint', (req, res) => res.status(200).sendFile(path.join(__dirname, 'songs.pptx')));
+app.get('/choruses', powerpoint.choruses);
+app.post('/chorus/:index', powerpoint.chorus);
 app.post('/download', powerpoint.download);
 app.post('/whatsapp', powerpoint.whatsapp);
 

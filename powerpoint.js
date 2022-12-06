@@ -6,8 +6,8 @@ const client = require('twilio')(accountSid, authToken);
 const axios = require('axios');
 const instance = axios.create();
 const fs = require('fs');
+const { readdir } = require('fs/promises');
 const pdf = require('pdf-parse');
-
 
 
 function getFont(line) {
@@ -288,6 +288,69 @@ function printResponsiveReading(pres, number) {
     });
 }
 
+exports.chorus = async (req, res) => {
+    try {
+        
+        const index = req.params.index;
+        const songs = await getSongs(path.join(__dirname, "/assets/"))
+        const name = songs[index];
+        const file = path.join(__dirname, "/assets/", name);
+
+        fs.readFile(file, { encoding: 'utf-8' }, async function (err, data) {
+            if (!err) {
+                let pptx = new PPTX.Composer();
+                await pptx.compose(pres => {
+
+                    pres.title(name)
+                        .author('Martin Kululanga')
+                        .company('Kabula Hill SDA')
+                        .revision('1')
+                        .subject('Chorus')
+                        .layout('LAYOUT_16x9');
+
+                    data.split('\n').forEach((line, index) => {
+
+                        pres.addSlide(slide => {
+                            //add line
+                            slide.addText(text => {
+                                const font = getFont(line)
+                                const t = line.replace(',', '\n')
+
+                                // Remove new line at the end of string
+                                const v = t.indexOf('\n') == t.length - 1 ? t.substring(0, t.length - 1) : t;
+
+                                text.value(v)
+                                    .x(0)
+                                    .y(10)
+                                    .cx(720)
+                                    .cy(400)
+                                    .autoFit(true)
+                                    .fontFace('Calibri')
+                                    .fontSize(font)
+                                    // .textWrap('none')
+                                    .textAlign('center')
+                                    .fontBold(true)
+                                    .textVerticalAlign('center')
+                                    .margin(0);
+                            });
+
+                        });
+                    });
+
+                });
+
+                await pptx.save('./chorus.pptx');
+                return res.status(200).sendFile(path.join(__dirname, './chorus.pptx'))
+            } else {
+                return res.status(500).json({ result: false, message: err.message });
+            }
+        });
+
+    } catch (e) {
+        console.log(e.message);
+        return res.status(500).json({ result: false, message: e.message });
+    }
+}
 
 exports.download = async (req, res) => {
 
@@ -402,3 +465,34 @@ exports.whatsapp = async (req, res) => {
     }
 }
 
+exports.choruses = async (req, res) => {
+    try {
+        const filename = path.join(__dirname, "/assets");
+        const songs = await getSongs(filename)
+
+        const html = `
+            <html>
+                <title>Choruses</title>
+                <body>
+                    <section style="display:grid; width:100vw; height:100vh; grid-template-columns:repeat(6, 300px); grid-template-rows: 200px 250px; grid-auto-rows:150px">
+                        ${songs.map((song, index) =>
+            `<form action="/chorus/${index}" method="POST" style="padding:10px; border-radius:10px; color:grey; font-size:14pt; border-style:solid; border-width:1px">
+                            <h4>${song.replace(/\.txt/gmi, '')}</h4>
+                            <br/>
+                            <button type="submit" style="color:white; cursor:pointer; background:blue; padding:10px;border:none; border-radius:10px">
+                                DOWNLOAD PPT
+                            </button>
+                        </form>
+                        `
+        ).join("\n")}
+                    </section>
+                </body>
+            </html>
+        `
+        return res.status(200).send(html);
+    } catch (e) {
+        console.log(e.message)
+    }
+}
+
+const getSongs = async source => (await readdir(source, { withFileTypes: true })).filter(dirent => !dirent.isDirectory()).map(dirent => dirent.name)
