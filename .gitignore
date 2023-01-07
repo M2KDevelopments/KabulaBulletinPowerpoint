@@ -114,3 +114,6 @@ bibles/
 *.pptx
 *.ppt
 *.pdf
+
+# Score Sheets
+piano/
