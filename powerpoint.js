@@ -499,7 +499,7 @@ exports.getChorusNames = async (req, res) => {
     try {
         const filename = path.join(__dirname, "/assets");
         const songs = await getSongs(filename);
-        return res.status(200).send(songs.replace(/\.json|\.txt/gmi, ''));
+        return res.status(200).send(songs.map(song => song.replace(/\.json|\.txt/gmi, '')));
     } catch (e) {
         console.log(e.message)
     }
