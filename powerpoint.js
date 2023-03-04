@@ -298,6 +298,9 @@ exports.chorus = async (req, res) => {
 
         fs.readFile(file, { encoding: 'utf-8' }, async function (err, data) {
             if (!err) {
+                const json = JSON.parse(data);
+                const { verses, verse, chorus } = json;
+
                 let pptx = new PPTX.Composer();
                 await pptx.compose(pres => {
 
@@ -308,34 +311,121 @@ exports.chorus = async (req, res) => {
                         .subject('Chorus')
                         .layout('LAYOUT_16x9');
 
-                    data.split('\n').forEach((line, index) => {
+                    if (verse) {
+                        verse.forEach((line, index) => {
 
-                        pres.addSlide(slide => {
-                            //add line
-                            slide.addText(text => {
-                                const font = getFont(line)
-                                const t = line.replace(',', '\n')
+                            pres.addSlide(slide => {
+                                //add line
+                                slide.addText(text => {
+                                    const font = getFont(line)
+                                    const t = line.replace(',', '\n')
 
-                                // Remove new line at the end of string
-                                const v = t.indexOf('\n') == t.length - 1 ? t.substring(0, t.length - 1) : t;
+                                    // Remove new line at the end of string
+                                    const v = t.indexOf('\n') == t.length - 1 ? t.substring(0, t.length - 1) : t;
 
-                                text.value(v)
-                                    .x(0)
-                                    .y(10)
-                                    .cx(720)
-                                    .cy(400)
-                                    .autoFit(true)
-                                    .fontFace('Calibri')
-                                    .fontSize(font)
-                                    // .textWrap('none')
-                                    .textAlign('center')
-                                    .fontBold(true)
-                                    .textVerticalAlign('center')
-                                    .margin(0);
+                                    text.value(v)
+                                        .x(0)
+                                        .y(10)
+                                        .cx(720)
+                                        .cy(400)
+                                        .autoFit(true)
+                                        .fontFace('Calibri')
+                                        .fontSize(font)
+                                        // .textWrap('none')
+                                        .textAlign('center')
+                                        .fontBold(true)
+                                        .textVerticalAlign('center')
+                                        .margin(0);
+                                });
+
+                            });
+                        });
+                    } else if (verses) {
+                        verses.forEach((verse, index) => {
+                            const lines = verse.split('\n');
+                            lines.forEach((line, linecount) => {
+                                pres.addSlide(slide => {
+                                    //add verse number
+                                    slide.addText(text => {
+                                        text.value(`Verse ${index + 1}`)
+                                            .x(10)
+                                            .y(0)
+                                            .cx(700)
+                                            .cy(30)
+                                            .autoFit(true)
+                                            .fontFace('Calibri')
+                                            .fontSize(20)
+                                            .textWrap('none')
+                                            .textAlign('left')
+                                            .textVerticalAlign('center')
+                                            .margin(0);
+                                    });
+
+                                    //add verse text
+                                    const font = getFont(line);
+                                    slide.addText(text => {
+                                        text.value(line)
+                                            .x(0)
+                                            .y(10)
+                                            .cx(720)
+                                            .cy(400)
+                                            .autoFit(true)
+                                            .fontFace('Calibri')
+                                            .fontSize(font)
+                                            // .textWrap('none')
+                                            .textAlign('center')
+                                            .textVerticalAlign('center')
+                                            .fontBold(true)
+                                            .margin(0);
+                                    });
+
+                                });
                             });
 
+                            if (chorus !== "") {
+                                const chorus_lines = chorus.split('\n');
+                                chorus_lines.forEach(line => {
+                                    pres.addSlide(slide => {
+                                        //add verse number
+                                        slide.addText(text => {
+                                            text.value(`Corus`)
+                                                .x(10)
+                                                .y(0)
+                                                .cx(700)
+                                                .cy(30)
+                                                .autoFit(true)
+                                                .fontFace('Calibri')
+                                                .fontSize(20)
+                                                .textWrap('none')
+                                                .textAlign('center')
+                                                .textVerticalAlign('center')
+                                                .margin(0);
+                                        });
+
+
+                                        //add verse text
+                                        const font = getFont(line);
+                                        slide.addText(text => {
+                                            text.value(line)
+                                                .x(0)
+                                                .y(10)
+                                                .cx(720)
+                                                .cy(400)
+                                                .autoFit(true)
+                                                .fontFace('Calibri')
+                                                .fontSize(font)
+                                                // .textWrap('none')
+                                                .textAlign('center')
+                                                .textVerticalAlign('center')
+                                                .fontBold(true)
+                                                .margin(0);
+                                        });
+                                    });
+                                });
+                            }
                         });
-                    });
+                    }
+
 
                 });
 
@@ -477,10 +567,10 @@ exports.choruses = async (req, res) => {
                     <section style="display:grid; width:100vw; height:100vh; grid-template-columns:repeat(6, 300px); grid-template-rows: 200px 250px; grid-auto-rows:150px">
                         ${songs.map((song, index) =>
             `<form action="/chorus/${index}" method="POST" style="padding:10px; border-radius:10px; color:grey; font-size:14pt; border-style:solid; border-width:1px">
-                            <h4>${song.replace(/\.txt/gmi, '')}</h4>
+                            <h4>${index + 1} ${song.replace(/\.txt|\.json/gmi, '')}</h4>
                             <br/>
                             <button type="submit" style="color:white; cursor:pointer; background:blue; padding:10px;border:none; border-radius:10px">
-                                DOWNLOAD PPT
+                                Downlaad PowerPoint
                             </button>
                         </form>
                         `
