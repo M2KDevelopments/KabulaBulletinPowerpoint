@@ -10,7 +10,6 @@ const { readdir } = require('fs/promises');
 const pdf = require('pdf-parse');
 
 
-
 function getFont(line) {
     const x = line.length;
     const m = -1.228571428571429;
@@ -447,7 +446,7 @@ exports.download = async (req, res) => {
 
 
     let pptx = new PPTX.Composer();
-    const { openingHymn, closingHymn, responsiveReading } = req.body;
+    const { openingHymn, closingHymn, responsiveReading, scripture_reading, children_sermon, music, preacher, sermon_title  } = req.body;
 
     await pptx.compose(pres => {
 
@@ -596,7 +595,6 @@ exports.getChorusNames = async (req, res) => {
     }
 }
 
-
 exports.bulletin = async (req, res) => {
     try {
         const filename = req.storedfilename;
@@ -631,14 +629,13 @@ exports.bulletin = async (req, res) => {
         // Delete Files
         fs.unlinkSync(filepath);
 
-        return res.status(200).json({ response_reading, scripture_reading, opening_hymn, closing_hymn, children_sermon, music, preacher, sermon_title });
-
+        req.body = { openingHymn: opening_hymn, closingHymn: closing_hymn, responsiveReading: response_reading ? response_reading : 696, scripture_reading, children_sermon, music, preacher, sermon_title };
+        return await this.download(req, res);
     } catch (e) {
         console.log(e.message)
         return res.status(500).json({ result: false, message: e.message });
     }
 
 }
-
 
 const getSongs = async source => (await readdir(source, { withFileTypes: true })).filter(dirent => !dirent.isDirectory()).map(dirent => dirent.name)
