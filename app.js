@@ -6,10 +6,8 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const app = express();
-const powerpoint = require("./powerpoint");
-const path = require('path');
-
-
+const routes = require("./api/routes/main");
+ 
 // Middleware
 app.use(morgan('dev'));
 app.use(cors());
@@ -17,13 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('view engine', 'ejs');//Set EJS
 
-app.get('/', (req, res) => res.status(200).render(path.join(__dirname, "./index.ejs"), {}));
-app.get('/powerpoint', (req, res) => res.status(200).sendFile(path.join(__dirname, 'songs.pptx')));
-app.get('/choruses', powerpoint.choruses);
-app.get('/chorus/all/names', powerpoint.getChorusNames);
-app.post('/chorus/:index', powerpoint.chorus);
-app.post('/download', powerpoint.download);
-app.post('/whatsapp', powerpoint.whatsapp);
+app.use('/', routes);
 
 const port = process.env.PORT || 4000;
 

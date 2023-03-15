@@ -8,6 +8,7 @@ const instance = axios.create();
 const fs = require('fs');
 const { readdir } = require('fs/promises');
 const pdf = require('pdf-parse');
+const pdfjsLib = require('pdfjs-dist');
 
 
 function getFont(line) {
@@ -21,7 +22,7 @@ function getFont(line) {
 
 function printSong(typeOfSong, pres, number, courtworship = false) {
 
-    const hymn = require(`./res/${number}.json`);
+    const hymn = require(`../assets/hymns/${number}.json`);
     const { title, verses, chorus } = hymn;
     const courtworshipfonts = [110, 110, 100, 100];
 
@@ -153,7 +154,7 @@ function printSong(typeOfSong, pres, number, courtworship = false) {
 
 function printResponsiveReading(pres, number) {
 
-    const hymn = require(`./res/${number}.json`);
+    const hymn = require(`../assets/hymns/${number}.json`);
     const { title, verses } = hymn;
 
     pres.addSlide(slide => {
@@ -292,9 +293,9 @@ exports.chorus = async (req, res) => {
     try {
 
         const index = req.params.index;
-        const songs = await getSongs(path.join(__dirname, "/assets/"))
+        const songs = await getSongs(path.join(__dirname, "../assets/choruses/"))
         const name = songs[index];
-        const file = path.join(__dirname, "/assets/", name);
+        const file = path.join(__dirname, "../assets/choruses/", name);
 
         fs.readFile(file, { encoding: 'utf-8' }, async function (err, data) {
             if (!err) {
@@ -430,7 +431,7 @@ exports.chorus = async (req, res) => {
                 });
 
                 await pptx.save('./chorus.pptx');
-                return res.status(200).sendFile(path.join(__dirname, './chorus.pptx'))
+                return res.status(200).sendFile(path.join(__dirname, '../../chorus.pptx'))
             } else {
                 return res.status(500).json({ result: false, message: err.message });
             }
@@ -465,7 +466,7 @@ exports.download = async (req, res) => {
     });
 
     await pptx.save(`./hymnal-songs.pptx`);
-    return res.status(200).sendFile(path.join(__dirname, 'hymnal-songs.pptx'));
+    return res.status(200).sendFile(path.join(__dirname, '../../hymnal-songs.pptx'));
 }
 
 exports.whatsapp = async (req, res) => {
@@ -557,7 +558,7 @@ exports.whatsapp = async (req, res) => {
 
 exports.choruses = async (req, res) => {
     try {
-        const filename = path.join(__dirname, "/assets");
+        const filename = path.join(__dirname, "../assets/choruses/");
         const songs = await getSongs(filename)
 
         const html = `
@@ -587,12 +588,43 @@ exports.choruses = async (req, res) => {
 
 exports.getChorusNames = async (req, res) => {
     try {
-        const filename = path.join(__dirname, "/assets");
+        const filename = path.join(__dirname, "../assets/choruses/");
         const songs = await getSongs(filename);
         return res.status(200).send(songs.map(song => song.replace(/\.json|\.txt/gmi, '')));
     } catch (e) {
         console.log(e.message)
     }
 }
+
+
+exports.bulletin = async (req, res) => {
+    try {
+        const filename = req.storedfilename;
+        const filepath = path.join(__dirname, `../public/${filename}`);
+
+        const pdffile = await pdfjsLib.getDocument(filepath).promise;
+        const numPages = pdffile.numPages;
+        console.log('Number of Pages:', numPages);
+    
+        // // Read the contents of each page
+        // for (let i = 1; i <= numPages; i++) {
+        //     pdf.getPage(i).then(function(page) {
+        //         page.getTextContent().then(function(textContent) {
+        //             // Combine the text items into a single string
+        //             const text = textContent.items.map(function(item) {
+        //                 return item.str;
+        //             }).join('');
+        //             console.log('Page', i, 'Contents:', text);
+        //         });
+        //     });
+        // }
+
+        return res.status(200).sendFile(filepath);
+    } catch (e) {
+        console.log(e.message)
+        return res.status(500).json({ result: false, message: e.message });
+    }
+}
+
 
 const getSongs = async source => (await readdir(source, { withFileTypes: true })).filter(dirent => !dirent.isDirectory()).map(dirent => dirent.name)
