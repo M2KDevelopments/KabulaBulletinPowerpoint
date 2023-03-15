@@ -617,7 +617,7 @@ exports.bulletin = async (req, res) => {
 
         }
 
-        //Opening Hymn
+        // Opening Hymn
         const opening_hymn = parseInt(data.text.match(/Opening hymnal.*\n/gmi, '')[0].match(/\d+/)[0]);
         const closing_hymn = parseInt(data.text.match(/Closing hymnal.*\n/gmi, '')[0].match(/\d+/)[0]);
         const children_sermon = data.text.match(/Children Sermon.*\n/gmi, '')[0].replace(/:|Children Sermon/gmi, '').trim();
@@ -625,14 +625,13 @@ exports.bulletin = async (req, res) => {
         const preacher = data.text.match(/Preacher.*\n/gmi, '')[0].replace(/:|Preacher/gmi, '').trim();
         const sermon_title = data.text.match(/Sermon Title.*\n/gmi, '')[0].replace(/:|Sermon Title/gmi, '').trim();
 
-
-
-
         return res.status(200).json({ response_reading, scripture_reading, opening_hymn, closing_hymn, children_sermon, music, preacher, sermon_title });
+    
     } catch (e) {
         console.log(e.message)
         return res.status(500).json({ result: false, message: e.message });
     }
+
 }
 
 
