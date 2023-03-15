@@ -23,7 +23,6 @@
     "nodejs-pptx": "^1.0.1",
     "nodemon": "^2.0.18",
     "pdf-parse": "^1.1.1",
-    "pdfjs-dist": "^3.4.120",
     "twilio": "^3.78.0"
   }
 }

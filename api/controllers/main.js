@@ -8,7 +8,7 @@ const instance = axios.create();
 const fs = require('fs');
 const { readdir } = require('fs/promises');
 const pdf = require('pdf-parse');
-const pdfjsLib = require('pdfjs-dist');
+
 
 
 function getFont(line) {
@@ -601,25 +601,34 @@ exports.bulletin = async (req, res) => {
     try {
         const filename = req.storedfilename;
         const filepath = path.join(__dirname, `../public/${filename}`);
+        const buffer = fs.readFileSync(filepath);
+        const data = await pdf(buffer);
 
-        const pdffile = await pdfjsLib.getDocument(filepath).promise;
-        const numPages = pdffile.numPages;
-        console.log('Number of Pages:', numPages);
-    
-        // // Read the contents of each page
-        // for (let i = 1; i <= numPages; i++) {
-        //     pdf.getPage(i).then(function(page) {
-        //         page.getTextContent().then(function(textContent) {
-        //             // Combine the text items into a single string
-        //             const text = textContent.items.map(function(item) {
-        //                 return item.str;
-        //             }).join('');
-        //             console.log('Page', i, 'Contents:', text);
-        //         });
-        //     });
-        // }
+        // Scripture and Responsive Reading
+        let response_reading = "";
+        let scripture_reading = "";
+        if (data.text.match(/(Responsive|Scripture) Reading.*\n/gmi, '') && data.text.match(/(Responsive|Scripture) Reading.*\n/gmi, '')[0]) {
+            const text = data.text.match(/(Responsive|Scripture) Reading.*\n/gmi, '')[0];
+            if (text.match(/Responsive/)) {
+                response_reading = parseInt(text.match(/\d+/)[0]);
+            } else {
+                scripture_reading = text.replace(/(Responsive|Scripture) Reading/gmi, '');
+            }
 
-        return res.status(200).sendFile(filepath);
+        }
+
+        //Opening Hymn
+        const opening_hymn = parseInt(data.text.match(/Opening hymnal.*\n/gmi, '')[0].match(/\d+/)[0]);
+        const closing_hymn = parseInt(data.text.match(/Closing hymnal.*\n/gmi, '')[0].match(/\d+/)[0]);
+        const children_sermon = data.text.match(/Children Sermon.*\n/gmi, '')[0].replace(/:|Children Sermon/gmi, '').trim();
+        const music = data.text.match(/Musical Meditation.*\n/gmi, '')[0].replace(/:|Musical Meditation/gmi, '').trim();
+        const preacher = data.text.match(/Preacher.*\n/gmi, '')[0].replace(/:|Preacher/gmi, '').trim();
+        const sermon_title = data.text.match(/Sermon Title.*\n/gmi, '')[0].replace(/:|Sermon Title/gmi, '').trim();
+
+
+
+
+        return res.status(200).json({ response_reading, scripture_reading, opening_hymn, closing_hymn, children_sermon, music, preacher, sermon_title });
     } catch (e) {
         console.log(e.message)
         return res.status(500).json({ result: false, message: e.message });
