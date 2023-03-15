@@ -607,15 +607,18 @@ exports.bulletin = async (req, res) => {
         // Scripture and Responsive Reading
         let response_reading = "";
         let scripture_reading = "";
-        if (data.text.match(/(Responsive|Scripture) Reading.*\n/gmi, '') && data.text.match(/(Responsive|Scripture) Reading.*\n/gmi, '')[0]) {
-            const text = data.text.match(/(Responsive|Scripture) Reading.*\n/gmi, '')[0];
+
+        if (data.text.match(/(Responsive|Scripture).*Reading.*\n/gmi, '') && data.text.match(/(Responsive|Scripture).*Reading.*\n/gmi, '')[0]) {
+            const text = data.text.match(/(Responsive|Scripture).*Reading.*\n/gmi, '')[0];
             if (text.match(/Responsive/)) {
-                response_reading = parseInt(text.match(/\d+/)[0]);
+                if (text.match(/\d+/)) response_reading = parseInt(text.match(/\d+/)[0]);
             } else {
-                scripture_reading = text.replace(/(Responsive|Scripture) Reading/gmi, '');
+                scripture_reading = text.replace(/(Responsive|Scripture).*Reading|:|\n/gmi, '').trim();
             }
 
         }
+
+        if (data.text.match(/Key Text.*\n/gmi, '')) scripture_reading = data.text.match(/Key Text.*\n/gmi, '')[0].replace(/:|Key Text/gmi, '').trim();
 
         // Opening Hymn
         const opening_hymn = parseInt(data.text.match(/Opening hymnal.*\n/gmi, '')[0].match(/\d+/)[0]);
@@ -625,8 +628,11 @@ exports.bulletin = async (req, res) => {
         const preacher = data.text.match(/Preacher.*\n/gmi, '')[0].replace(/:|Preacher/gmi, '').trim();
         const sermon_title = data.text.match(/Sermon Title.*\n/gmi, '')[0].replace(/:|Sermon Title/gmi, '').trim();
 
+        // Delete Files
+        fs.unlinkSync(filepath);
+
         return res.status(200).json({ response_reading, scripture_reading, opening_hymn, closing_hymn, children_sermon, music, preacher, sermon_title });
-    
+
     } catch (e) {
         console.log(e.message)
         return res.status(500).json({ result: false, message: e.message });
