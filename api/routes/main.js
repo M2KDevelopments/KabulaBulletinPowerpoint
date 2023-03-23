@@ -14,6 +14,8 @@ router.get('/chorus/all/names', powerpoint.getChorusNames);
 
 router.get('/chorus/by/name', powerpoint.getChorusJson);
 
+router.get('/chorus/:index', powerpoint.chorus);
+
 router.post('/chorus/:index', powerpoint.chorus);
 
 router.post('/download', powerpoint.download);
