@@ -602,7 +602,7 @@ exports.getChorusNames = async (req, res) => {
 exports.getChorusJson = async (req, res) => {
     try {
         const {name} = req.query;
-        const chorus = path.join(__dirname, "../assets/choruses/", name, ".json");
+        const chorus = path.join(__dirname, "../assets/choruses/", decodeURIComponent(name), ".json");
         res.status(200).sendFile(chorus);
     } catch (e) {
         console.log(e.message)
