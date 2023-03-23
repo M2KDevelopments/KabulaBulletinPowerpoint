@@ -587,9 +587,23 @@ exports.choruses = async (req, res) => {
 
 exports.getChorusNames = async (req, res) => {
     try {
+        const {json} = req.query;
         const filename = path.join(__dirname, "../assets/choruses/");
         const songs = await getSongs(filename);
+
+        if(json) res.status(200).json(songs.map(song => song.replace(/\.json|\.txt/gmi, '')));
         return res.status(200).send(songs.map(song => song.replace(/\.json|\.txt/gmi, '')));
+    } catch (e) {
+        console.log(e.message)
+    }
+}
+
+
+exports.getChorusJson = async (req, res) => {
+    try {
+        const {name} = req.query;
+        const chorus = path.join(__dirname, "../assets/choruses/", name, ".json");
+        res.status(200).sendFile(chorus);
     } catch (e) {
         console.log(e.message)
     }
