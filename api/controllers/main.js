@@ -6,7 +6,7 @@ const client = require('twilio')(accountSid, authToken);
 const axios = require('axios');
 const instance = axios.create();
 const fs = require('fs');
-const { readdir } = require('fs/promises');
+const { readdir, readFile } = require('fs/promises');
 const pdf = require('pdf-parse');
 
 
@@ -286,6 +286,24 @@ function printResponsiveReading(pres, number) {
 
         });
     });
+}
+
+
+exports.songs = async (req, res) => {
+    try {
+        const songs = [];
+        for (let i = 1; i <= 695; i++) {
+            const name = `${i}.json`;
+            const file = path.join(__dirname, "../assets/hymns/", name);
+            const data = await readFile(file, { encoding: 'utf-8' });
+            const json = JSON.parse(data);
+            songs.push(json);
+        }
+        return res.status(200).json(songs.map(song => song.title));
+    } catch (e) {
+        console.log(e.message);
+        return res.status(500).json({ result: false, message: e.message });
+    }
 }
 
 exports.chorus = async (req, res) => {

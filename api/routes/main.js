@@ -8,6 +8,8 @@ router.get('/', (req, res) => res.status(200).render(path.join(__dirname, "../vi
 
 router.get('/powerpoint', (req, res) => res.status(200).sendFile(path.join(__dirname, 'songs.pptx')));
 
+router.get('/songs',powerpoint.songs);
+
 router.get('/choruses', powerpoint.choruses);
 
 router.get('/chorus/all/names', powerpoint.getChorusNames);
