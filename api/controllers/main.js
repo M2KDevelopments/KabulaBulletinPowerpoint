@@ -289,7 +289,7 @@ function printResponsiveReading(pres, number) {
 }
 
 
-exports.songs = async (req, res) => {
+exports.hymns = async (req, res) => {
     try {
         const songs = [];
         for (let i = 1; i <= 695; i++) {
@@ -300,6 +300,19 @@ exports.songs = async (req, res) => {
             songs.push(json);
         }
         return res.status(200).json(songs.map(song => song.title));
+    } catch (e) {
+        console.log(e.message);
+        return res.status(500).json({ result: false, message: e.message });
+    }
+}
+
+exports.getHymnByNumber = async (req, res) => {
+    try {
+        const name = `${req.params.number}.json`;
+        const file = path.join(__dirname, "../assets/hymns/", name);
+        const data = await readFile(file, { encoding: 'utf-8' });
+        const song = JSON.parse(data);
+        return res.status(200).json(song);
     } catch (e) {
         console.log(e.message);
         return res.status(500).json({ result: false, message: e.message });
