@@ -39,7 +39,7 @@ function printSong(typeOfSong, pres, number, courtworship = false) {
                 .fontSize(105)
                 // .textColor('CC0000')
                 // .textWrap('none')
-                .textAlign('left')
+                .textAlign('center')
                 .textVerticalAlign('center')
                 // .line({ color: '0000FF', dashType: 'dash', width: 1.0 })
                 .margin(0);
