@@ -117,3 +117,5 @@ bibles/
 
 # Score Sheets
 piano/
+api/public/*.jpg
+eng.traineddata
