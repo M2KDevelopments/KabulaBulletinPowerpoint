@@ -5,6 +5,9 @@ const Controller = require('../controllers/vop');
 // API - domain.com/api/vop
 router.get('/', Controller.get);
 
+// API - domain.com/api/vop/all/summaries
+router.get('/all/summaries', Controller.getSummaries);
+
 // API - domain.com/api/vop/:number
 router.get('/:number', Controller.getGuide);
 

@@ -2,6 +2,27 @@ const fs = require('fs').promises;
 const path = require('path');
 const tesseract = require("tesseract.js");
 
+exports.getSummaries = async (req, res) => {
+    try {
+
+        const list = [];
+        for (let i = 1; i <= 12; i++) {
+            const json = require(`../assets/vop/guide${i}.json`);
+            list.push({
+                title: json.title,
+                number: json.number,
+                summary: json.introduction,
+                youtube: "https://www.youtube.com/watch?v=_ugYa3YLIrg&pp=ygUPY2hyaXN0aWFucyBob3Bl",
+                color: "#3f7de8",
+            })
+        }
+        return res.status(200).json(list)
+    } catch (e) {
+        console.log(e.message);
+        return res.status(500).json({ result: false, message: e.message })
+    }
+}
+
 
 exports.get = async (req, res) => {
     try {
