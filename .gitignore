@@ -106,10 +106,6 @@ dist
 #Bash Files
 *.bat
 
-
-#Bible Files
-bibles/
-
 # Power Point Files
 *.pptx
 *.ppt
