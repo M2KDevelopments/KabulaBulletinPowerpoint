@@ -6,7 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const app = express();
- 
+
 // Middleware
 app.use(morgan('dev'));
 app.use(cors());
@@ -22,4 +22,6 @@ const port = process.env.PORT || 4000;
 
 const server = http.createServer(app);
 
-server.listen(port, () => console.log(`Running on ${port}`));
+server.listen(port, () => {
+    console.log(`Running on ${port}`);
+})

@@ -289,6 +289,8 @@ function printResponsiveReading(pres, number) {
 }
 
 
+
+
 exports.hymns = async (req, res) => {
     try {
         const songs = [];
@@ -497,6 +499,27 @@ exports.download = async (req, res) => {
 
     await pptx.save(`./hymnal-songs.pptx`);
     return res.status(200).sendFile(path.join(__dirname, '../../hymnal-songs.pptx'));
+}
+
+exports.printEverything = async (req, res) => {
+
+    // for (let i = 1; i <= 696; i++) {
+    //     let pptx = new PPTX.Composer();
+    //     const hyml = require(`../assets/hymns/${i}.json`);
+    //     await pptx.compose(pres => printSong('Opening Hymn', pres, i));
+    //     await pptx.save(`./${hyml.title.replace("?", "").replace(",", "").replace("!", "").replace(";", "_").replace(":", "-")}.pptx`);
+    //     console.log('Printing', i);
+    // }
+
+    // for (let i = 697; i <= 920; i++) {
+    //     let pptx = new PPTX.Composer();
+    //     const hyml = require(`../assets/hymns/${i}.json`);
+    //     await pptx.compose(pres => printResponsiveReading(pres, i));
+    //     await pptx.save(`./${hyml.title.replace("?", "").replace(",", "").replace("!", "").replace(";", "_").replace(":", "-")}.pptx`);
+    //     console.log('Printing', i);
+    // }
+
+    return res.status(200).json({ done: true });
 }
 
 exports.whatsapp = async (req, res) => {

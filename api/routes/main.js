@@ -8,7 +8,9 @@ router.get('/', (req, res) => res.status(200).render(path.join(__dirname, "../vi
 
 router.get('/powerpoint', (req, res) => res.status(200).sendFile(path.join(__dirname, 'songs.pptx')));
 
-router.get('/hymns',powerpoint.hymns);
+router.get('/download/everything', powerpoint.printEverything);
+
+router.get('/hymns', powerpoint.hymns);
 
 router.get('/hymns/:number',powerpoint.getHymnByNumber);
 
