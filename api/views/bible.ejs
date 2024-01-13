@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Animation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #banner {
+            position: absolute;
+            top: 50%;
+            left: -100%;
+            /* Initially off-screen */
+            width: 100%;
+            /*background-color: #3498db;*/
+            background-color: #30546c77;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: left 0.5s ease-in-out;
+        }
+
+        #banner h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        #banner p {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        #showBannerBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="display: flex;">
+        <button id="showBannerBtn">Show Banner</button>
+        <select id="book"></select>
+        <input id="chapter" type="number" placeholder="Chapter" value="1" />
+        <input id="verse" type="number" placeholder="Verse" value="1" />
+    </div>
+
+
+    <div id="banner">
+        <h1>Banner Title</h1>
+        <p>Banner Subtitle</p>
+    </div>
+
+    <script>
+
+        var books = [
+            "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+            "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+            "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra",
+            "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
+            "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations",
+            "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
+            "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk",
+            "Zephaniah", "Haggai", "Zechariah", "Malachi", "Matthew",
+            "Mark", "Luke", "John", "Acts", "Romans",
+            "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians",
+            "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy",
+            "Titus", "Philemon", "Hebrews", "James", "1 Peter",
+            "2 Peter", "1 John", "2 John", "3 John", "Jude",
+            "Revelation"
+        ];
+
+        var selectElement = document.getElementById('book');
+
+        books.forEach(function (book, index) {
+            var option = document.createElement('option');
+            option.value = index + 1; // Adding 1 to make the value start from 1
+            option.text = book;
+            selectElement.add(option);
+        });
+
+        document.getElementById('showBannerBtn').addEventListener('click', async function () {
+            var banner = document.getElementById('banner');
+            if (banner.style.left === '-100%') {
+                // Get the verse
+                var book = document.getElementById('book').value;
+                var name = books[parseInt(book) - 1];
+                var chapter = document.getElementById('chapter').value;
+                var verse = document.getElementById('verse').value;
+
+                const res = await fetch(`/api/bible/${book}/${chapter}/${verse}`);
+                const json = await res.json();
+                console.log(name, chapter, verse, json);
+
+                banner.querySelector('h1').textContent = `${name} ${chapter}:${verse}`
+                banner.querySelector('p').textContent = json.replace(/<\/?[^>]+>/g, '');;
+            }
+
+
+            // Toggle the banner's visibility by adjusting the left property
+            if (banner.style.left === '-100%') {
+                banner.style.left = '0';
+            } else {
+                banner.style.left = '-100%';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

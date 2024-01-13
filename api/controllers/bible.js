@@ -1,3 +1,6 @@
+const path = require('path');
+
+
 exports.getChapter = async (req, res) => {
     try {
         let { lang } = req.query;
@@ -60,3 +63,5 @@ exports.getVerses = async (req, res) => {
         return res.status(500).json({ result: false, message: e.message });
     }
 }
+
+exports.getBiblePage = (req, res) => res.status(200).render(path.join(__dirname, '../views/bible.ejs'));
