@@ -36,28 +36,45 @@
             font-size: 24px;
         }
 
-        #showBannerBtn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
+        #showBannerBtn,
+        #btnText {
             padding: 10px;
             cursor: pointer;
+            background: linear-gradient(#ff0077, #7605a6);
+            color: white;
+            border: none;
+            box-shadow: gray 5px;
+        }
+
+        input,
+        select {
+            background: purple;
+            color: rgb(255, 191, 251);
+            font-size: 16px;
+        }
+        h1{
+            color:#d26cfd;
+            font-size: 18px;
         }
     </style>
 </head>
 
 <body>
 
+    <h1>OBS KHC Verse Presenter</h1>
     <div style="display: flex;">
-        <button id="showBannerBtn">Show Banner</button>
         <select id="book"></select>
         <input id="chapter" type="number" placeholder="Chapter" value="1" />
         <input id="verse" type="number" placeholder="Verse" value="1" />
-
+        <button id="showBannerBtn">Show Banner</button>
+    </div>
+    <br />
+    <div style="display: flex;">
         <input id="title" type="text" placeholder="Title" />
-        <input id="subtitle" type="text" placeholder="Verse" />
+        <input id="subtitle" type="text" placeholder="Enter text" />
         <button id="btnText">Show Text</button>
     </div>
+
 
 
     <div id="banner">
