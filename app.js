@@ -17,6 +17,7 @@ app.set('view engine', 'ejs');//Set EJS
 app.use('/', require("./api/routes/main"));
 app.use('/api/vop', require("./api/routes/vop"));
 app.use('/api/bible', require("./api/routes/bible"));
+app.use('/api/zoom', require("./api/routes/zoom"));
 
 const port = process.env.PORT || 4000;
 

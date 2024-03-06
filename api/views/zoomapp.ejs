@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kabula Hill Zoom App</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #4e54c8, #8f94fb);
+      color: #fff;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #canvas {
+      position: absolute;
+      width: 1280px;
+      height: 720px;
+      background-color: #f0f0f0; /* Set a background color for better visibility */
+      display: none; /* Initially hidden */
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      margin: auto;
+    }
+
+    form label {
+      margin-bottom: 5px;
+    }
+
+    form input {
+      margin-bottom: 15px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .divider {
+      border-top: 2px solid #333;
+      margin: 20px 0;
+      text-align: center;
+      color: #333;
+    }
+
+    .divider h2 {
+      background-color: #fff;
+      padding: 0 10px;
+      font-size: 16px;
+      display: inline-block;
+    }
+
+    button {
+      background: #4e54c8;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #8f94fb;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<form id="eventForm">
+  <label for="responsiveReading">Responsive Reading:</label>
+  <input type="number" id="responsiveReading" name="responsiveReading" placeholder="Enter responsive reading" required>
+
+  <label for="scriptureReading">Scripture Reading:</label>
+  <input type="number" id="scriptureReading" name="scriptureReading" placeholder="Enter scripture reading" required>
+
+  <label for="openingHymn">Opening Hymn:</label>
+  <input type="number" id="openingHymn" name="openingHymn" placeholder="Enter opening hymn" required>
+
+  <label for="christInSongNumber">Christ in Song Number:</label>
+  <input type="number" id="christInSongNumber" name="christInSongNumber" placeholder="Enter Christ in song number" required>
+
+  <label for="chorus">Chorus:</label>
+  <input type="number" id="chorus" name="chorus" placeholder="Enter chorus" required>
+
+  <label for="closingHymn">Closing Hymn:</label>
+  <input type="number" id="closingHymn" name="closingHymn" placeholder="Enter closing hymn" required>
+
+  <div class="divider">
+    <h2>Lower Thirds</h2>
+  </div>
+
+  <label for="book">Book:</label>
+  <input type="text" id="book" name="book" placeholder="Enter book" required>
+
+  <label for="chapter">Chapter:</label>
+  <input type="number" id="chapter" name="chapter" placeholder="Enter chapter" required>
+
+  <label for="verse">Verse:</label>
+  <input type="number" id="verse" name="verse" placeholder="Enter verse" required>
+
+  <label for="title">Title:</label>
+  <input type="text" id="title" name="title" placeholder="Enter title" required>
+
+  <label for="subtitle">Subtitle:</label>
+  <input type="text" id="subtitle" name="subtitle" placeholder="Enter subtitle" required>
+
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+  document.getElementById('eventForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    // You can add JavaScript logic here to handle the form submission
+    // For demonstration purposes, you can log the form data to the console
+    console.log('Form submitted:', new FormData(event.target));
+  });
+</script>
+
+</body>
+</html>
