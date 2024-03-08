@@ -234,17 +234,84 @@
       event.preventDefault();
       const formdata = new FormData(event.target)
       const book = formdata.get('book')
+      const name = books.find(b => b == book);
       const chapter = formdata.get('chapter')
       const verse1 = formdata.get('verse')
       const verse2 = formdata.get('verse2');
       if (verse2) {
-        const response = await fetch(`/api/bible/${book}/${chapter}/${verse1}/${verse2}`);
-        const json = await response.json();
-        console.log(json)
+        //const response = await fetch(`/api/bible/${book}/${chapter}/${verse1}/${verse2}`);
+        //const json = await response.json();
+
+        // Canvas Settings
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+        const x = 30;
+        const y = 540;
+        const width = 500;
+        const height = 70;
+
+
+        await clearOverlay();
+
+        ctx.fillStyle = "#18033ea9";
+        ctx.fillRect(x, y, width, height);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.textAlign = "left";
+        ctx.font = `bold 38pt Arial`;
+        ctx.fillText(`${name} ${chapter}:${verse1}-${verse2}`, x + 20, y + 60);
+
+        try {
+          const imageData = ctx.getImageData(0, 0, 1280, 720);
+          const zoomData = await zoomSdk.drawImage({
+            x: 0,
+            y: 0,
+            imageData: imageData,
+            zIndex: 3,
+          });
+          const input = document.getElementById('overlayImageId');
+          input.value = zoomData.imageId;
+        } catch (e) {
+          console.log(e.message)
+        }
       } else {
         const response = await fetch(`/api/bible/${book}/${chapter}/${verse1}`);
-        const text = await response.json();
-        console.log(text.replace(/<\/?[^>]+>/g, ''))
+        const text = (await response.json()).replace(/<\/?[^>]+>/g, '');
+
+        // Canvas Settings
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+        const x = 30;
+        const y = 540;
+        const width = 1000;
+        const height = 150;
+
+
+        await clearOverlay();
+
+        ctx.fillStyle = "#18033ea9";
+        ctx.fillRect(x, y, width, height);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.textAlign = "left";
+        ctx.font = `bold 28pt Arial`;
+        ctx.fillText(`${name} ${chapter}:${verse1}`, x + 20, y + 60);
+        ctx.font = "15pt Arial";
+        ctx.fillText(text, x + 20, y + 100);
+
+        try {
+          const imageData = ctx.getImageData(0, 0, 1280, 720);
+          const zoomData = await zoomSdk.drawImage({
+            x: 0,
+            y: 0,
+            imageData: imageData,
+            zIndex: 3,
+          });
+          const input = document.getElementById('overlayImageId');
+          input.value = zoomData.imageId;
+        } catch (e) {
+          console.log(e.message)
+        }
       }
 
     });
