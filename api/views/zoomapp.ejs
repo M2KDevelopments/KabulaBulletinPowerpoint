@@ -102,7 +102,7 @@
 <body>
 
   <canvas id="canvas" class="hidden" width="1280" height="720"></canvas>
-  <input  id="overlayImageId" class="hidden" value="" />
+  <input id="overlayImageId" class="hidden" value="" />
 
   <form id="eventForm">
     <label for="responsiveReading">Responsive Reading:</label>
@@ -259,7 +259,7 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       try {
-        if (id) await zoomSdk.clearImage(id);
+        if (id) await zoomSdk.clearImage({ imageId: id });
       } catch (e) {
         console.log(e.message);
       }
